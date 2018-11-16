@@ -6,7 +6,6 @@
   ?>
 <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-   <link href="/css/style.css" rel="stylesheet">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <style>
@@ -64,25 +63,17 @@
 
 #customers tr {
     background-color: white;
-    
 }
 
-#customers tr.red:hover {
-background-color: rgba(255, 0, 0, 0.2);
+#customers tr:hover {background-color: #ddd;
 
-}
-#customers tr.orange:hover {
-background-color: rgba(255, 165, 0, 0.2);
-}
-#customers tr.green:hover {
-background-color: rgba(0, 255, 0, 0.2);
 }
 
 #customers th {
     padding-top: 12px;
     padding-bottom: 12px;
     text-align: center;
-    background-color: #777;
+    background-color: #076314;
     color: black;
 }
 .collapsible {
@@ -97,14 +88,14 @@ background-color: rgba(0, 255, 0, 0.2);
     font-size: 15px;
 }
 
-.active, .collapsible:hover {
-    background-color: #555;
-}
+/*.active, .collapsible:hover {*/
+/*    background-color: #555;*/
+/*}*/
 
 .content {
     padding: 0 18px;
     /*max-height: 0;*/
-    overflow: hidden;
+    /*overflow: hidden;*/
     transition: max-height 0.2s ease-out;
     background-color: #f1f1f1;
 }
@@ -268,11 +259,9 @@ echo "<option value='' disabled selected hidden>Select a User</option>";
 echo "</select>";
 // echo "</div>";
 echo "<br><br>";
-echo "Select what tickets you would like to see:<br><br>";
-echo "<input type='checkbox' name='statusS' value='Submitted'> Submitted &nbsp ";
-echo "<input type='checkbox' name='statusW' value='Work In Progress'>    Work In Progress &nbsp ";
-echo "<input type='checkbox' name='statusC' value='Completed'>    Completed<br><br>";
+?>
 
+<?php
 echo "  <button class='button'>
     Submit
     </button>";
@@ -287,10 +276,6 @@ include "Config.php";
 $bldg = $_POST["building"];
 $craft = $_POST["craft"];
 $user1 = $_POST["submitter"];
-$statusS = $_POST["statusS"];
-$statusW = $_POST["statusW"];
-$statusC = $_POST["statusC"];
-
 if($_POST["equip"] == "Other"){
   if($_POST["otherType"] !== ""){
   $equip = $_POST["otherType"];
@@ -314,65 +299,85 @@ if(isset($service)){
   !isset($equip);
 }
 if(isset($bldg)){
-if(isset($statusS)){
-    if(isset($statusW)){
-        if(isset($statusC)){
-            $statusS = "Submitted";
-            $statusW = "Work In Progress";
-            $statusC = "Completed";
-            include 'PFBuildingSWC.php';
-            echo table_start($bldg, $statusS, $statusW, $statusC);
-        }
-    $statusS = "Submitted";
-    $statusW = "Work In Progress";
-    include 'PFBuildingSW.php';
-    echo table_start($bldg, $statusS, $statusW);
-    }
-    elseif(isset($statusC)){
-            $statusS = "Submitted";
-            $statusC = "Completed";
-            include 'PFBuildingSC.php';
-            echo table_start($bldg, $statusS, $statusC);
-    }
-$statusS = "Submitted";
-include 'PFBuildingS.php';
-echo table_start($bldg, $statusS);
-}
-if(isset($statusW)){
-        if(isset($statusC)){
-            $statusW = "Work In Progress";
-            $statusC = "Completed";
-            include 'PFBuildingWC.php';
-            echo table_start($bldg, $statusW, $statusC);
-        }
-    $statusW = "Work In Progress";
-    include 'PFBuildingW.php';
-    echo table_start($bldg, $statusW);
-    }
-if(isset($statusC)){
-    $statusC = "Completed";
-    include 'PFBuildingC.php';
-    echo table_start($bldg, $statusC);
-    }
+?>
+
+<div class = "row">
+<?php
+$status = "Submitted";
+include 'PFBuilding.php';
+echo table_start($bldg, $status);
+?>
+</div>
+<div class = "row">
+<?php
+$status = "Work In Progress";
+echo table_start($bldg, $status);
+?>
+</div>
+<div class = "row">
+<?php
+$status = "Completed";
+echo table_start($bldg, $status);
+?>
+</div>
+
+
+<?php
+}else if(null !== $craft || $var){
+?>
+<div class = "row">
+<?php
+$status = "Submitted";
+include 'PFCraft.php';
+echo table_start($craft, $status);
+?>
+</div>
+<div class = "row">
+<?php
+$status = "Work In Progress";
+echo table_start($craft, $status);
+?>
+</div>
+<div class = "row">
+<?php
+$status = "Completed";
+echo table_start($craft, $status);
+?>
+</div>
+
+
+
+<?php
+}else if(isset($user1)){
+?>
+<div class = "row">
+<?php
+$status = "Submitted";
+include 'PFUser.php';
+echo table_start($user1, $status);
+?>
+</div>
+<div class = "row">
+<?php
+$status = "Work In Progress";
+echo table_start($user1, $status);
+?>
+</div>
+<div class = "row">
+<?php
+$status = "Completed";
+echo table_start($user1, $status);
+?>
+</div>
+
+
+
+<?php
+// }else if(isset($craft)){
+
 }
 ?>
 
-<script>
-var coll = document.getElementsByClassName("collapsible");
-var i;
-
-for (i = 0; i < coll.length; i++) {
-  coll[i].addEventListener("click", function() {
-    this.classList.toggle("active");
-    var content = this.nextElementSibling;
-    if (content.style.maxHeight){
-      content.style.maxHeight = null;
-    } else {
-      content.style.maxHeight = content.scrollHeight + "px";
-    } 
-  });
-}
-</script>
 
 
 </body>
