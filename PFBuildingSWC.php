@@ -18,13 +18,14 @@ $stat = $_SESSION['stat'];
 ?>
 </head>
 <?php
-function table_start($building, $statusS, $statusW, $statusC){
+function table_start($sql){
 include 'Config.php';
 $results_per_page = 10;
 if (isset($_GET["page".$section.""])) { $page  = $_GET["page".$section.""]; } else { $page=1; }; 
 $start_from = ($page-1) * $results_per_page;
-$sql = "SELECT * FROM WORKORDER NATURAL JOIN USER WHERE WO_SCHOOL = '$building' ORDER BY WO_ID DESC LIMIT $start_from, ".$results_per_page;
-$rs_result = $db->query($sql); 
+$sql1 = "SELECT * ".$sql." ORDER BY WO_ID DESC LIMIT $start_from, ".$results_per_page;
+// echo $sql1;
+$rs_result = $db->query($sql1); 
 ?> 
 <div class="content">
   <table id="customers">
@@ -78,8 +79,8 @@ $rs_result = $db->query($sql);
 </table>
 
 <?php
-$sql = "SELECT COUNT(*) AS total FROM WORKORDER WHERE WO_SCHOOL = '$building'";
-$result = $db->query($sql);
+$sql2 = "SELECT COUNT(*) AS total ".$sql;
+$result = $db->query($sql2);
 $row = $result->fetch_assoc();
 $total_pages = ceil($row["total"] / $results_per_page); // calculate total pages with results
 echo "Showing Page #".$page." of the ".$status." table <br>";

@@ -210,7 +210,7 @@ echo '<div>'.$var.'</div>';
  echo "<div class='container'>";
  echo "<form action='$thisPHP' method='POST'>";
  echo "<table summary= 'Registration'></table>";
- echo "Building:";
+ echo "Building: ";
  echo "<select name='building'>";
  echo "<option value='' disabled selected hidden>Select a Building</option>"; 
  echo "<option value='Ardmore'>Ardmore</option>"; 
@@ -223,7 +223,7 @@ echo '<div>'.$var.'</div>';
  echo "<option value='All'>All Buildings</option>";
  echo "</select>"; 
  echo "<br><br>"; 
- echo "Craft:";
+ echo "Craft: ";
 echo "<select name='craft'>";
 echo "<option value='' disabled selected hidden>Select a Craft</option>"; 
 echo "<option value='Technology'>Technology</option>";
@@ -231,7 +231,7 @@ echo "<option value='Grounds'>Grounds</option>";
 echo "<option value='Maintenance'>Maintenance</option>";
 echo "</select>";
 echo "<br><br>"; 
-echo "Equipment Type:";
+echo "Equipment Type: ";
 echo "<select name='equip' id='equip' onchange='java_script_:show(this.options[this.selectedIndex].value)'>";
 echo "<option value='' disabled selected hidden>Select a Type</option>"; 
 echo "<option value='Desktop'>Desktop</option>";
@@ -256,7 +256,7 @@ echo "<input type='text' name='CCode' maxlength='6'/>";
 echo "<br>"; 
 echo "</div>";
 echo "<br><br>"; 
-echo "Submitted By:";
+echo "Submitted By: ";
 echo "<select name='submitter'>";
 echo "<option value='' disabled selected hidden>Select a User</option>";
  include "Config.php";
@@ -313,48 +313,75 @@ if($_POST["equip"] == "Toshiba Copier"){
 if(isset($service)){
   !isset($equip);
 }
+$and = '0';
+$or = '0';
+$sql = "FROM WORKORDER NATURAL JOIN USER WHERE ";
 if(isset($bldg)){
+    $sql = $sql." WO_SCHOOL = '$bldg'";
+    $and = '1';
+}
+if(isset($craft)){
+    if($and == '1'){
+        $sql = $sql." AND WO_CRAFT = '$craft'";
+       
+    }else{
+        $sql = $sql." WO_CRAFT = '$craft'";
+        $and = '1';
+    }
+}
+if(isset($equip)){
+    if($and == '1'){
+        $sql = $sql." AND WO_EQUIP = '$craft'";
+    }else{
+        $sql = $sql." WO_EQUIP = '$equip'";
+        $and = '1';
+    }
+}
+if(isset($user1)){
+    if($and == '1'){
+        $sql = $sql." AND USER_ID = '$user1'";
+    }else{
+        $sql = $sql." USER_ID = '$user1'";
+        $and = '1';
+    }
+}
 if(isset($statusS)){
-    if(isset($statusW)){
-        if(isset($statusC)){
-            $statusS = "Submitted";
-            $statusW = "Work In Progress";
-            $statusC = "Completed";
-            include 'PFBuildingSWC.php';
-            echo table_start($bldg, $statusS, $statusW, $statusC);
-        }
-    $statusS = "Submitted";
-    $statusW = "Work In Progress";
-    include 'PFBuildingSW.php';
-    echo table_start($bldg, $statusS, $statusW);
+    if($and == '1'){
+        $sql = $sql." AND (WO_STATUS = '$statusS'";
+        $or = '1';
+    }else{
+        $sql = $sql." (WO_STATUS = '$statusS'";
+        $or = '1';
     }
-    elseif(isset($statusC)){
-            $statusS = "Submitted";
-            $statusC = "Completed";
-            include 'PFBuildingSC.php';
-            echo table_start($bldg, $statusS, $statusC);
-    }
-$statusS = "Submitted";
-include 'PFBuildingS.php';
-echo table_start($bldg, $statusS);
 }
 if(isset($statusW)){
-        if(isset($statusC)){
-            $statusW = "Work In Progress";
-            $statusC = "Completed";
-            include 'PFBuildingWC.php';
-            echo table_start($bldg, $statusW, $statusC);
-        }
-    $statusW = "Work In Progress";
-    include 'PFBuildingW.php';
-    echo table_start($bldg, $statusW);
-    }
-if(isset($statusC)){
-    $statusC = "Completed";
-    include 'PFBuildingC.php';
-    echo table_start($bldg, $statusC);
+    if($and == '1' && $or == '0'){
+        $sql = $sql." AND (WO_STATUS = '$statusW'";
+        $or = '1';
+    }elseif($or == '1'){
+        $sql = $sql." OR WO_STATUS = '$statusW'";
+    }else{
+        $sql = $sql." (WO_STATUS = '$statusW'";
+        $or = '1';
     }
 }
+if(isset($statusC)){
+      if($and == '1' && $or == '0'){
+        $sql = $sql." AND (WO_STATUS = '$statusC'";
+         $or = '1';
+    }
+    if($or == '1'){
+        $sql = $sql." OR WO_STATUS = '$statusC'";
+    }else{
+        $sql = $sql." (WO_STATUS = '$statusC'";
+        $or = '1';
+    }
+}
+if(isset($statusS)||isset($statusW)||isset($statusC)){
+    $sql = $sql.")";
+}
+include 'PFBuildingSWC.php';
+            echo table_start($sql);
 ?>
 
 <script>
