@@ -383,7 +383,7 @@ if(isset($statusS)||isset($statusW)||isset($statusC)){
 include 'PFBuildingSWC.php';
             echo table_start($sql);
 ?>
-
+<a href="javascript:void(0);" onclick="printPage();">Print</a> 
 <script>
 var coll = document.getElementsByClassName("collapsible");
 var i;
@@ -399,6 +399,20 @@ for (i = 0; i < coll.length; i++) {
     } 
   });
 }
+function printPage(){
+    var win = window.open('','','left=0,top=0,width=552,height=477,toolbar=0,scrollbars=0,status =0');
+
+    var content = "<html>";
+    content += "<body onload=\"window.print(); window.close();\">";
+    content += "<table>"
+    content += document.getElementById("customers").innerHTML ;
+    content += "</table>"
+    content += "</body>";
+    content += "</html>";
+    win.document.write(content);
+    win.document.close();
+}
+
 </script>
 
 
