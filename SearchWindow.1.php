@@ -7,6 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
    <link href="/css/style.css" rel="stylesheet">
+   <link href="/css/print.css" media="print" rel="stylesheet">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 <style>
@@ -139,8 +140,8 @@ background-color: rgba(0, 255, 0, 0.2);
     CCode.style.display='none';
     }
   }
-  function printDiv(content){
-    var printContents = document.getElementById(content).innerHTML;
+  function printDiv(table_start){
+    var printContents = document.getElementById(table_start).innerHTML;
     var originalContents = document.body.innerHTML;
     
     document.body.innerHTML = printContents;
@@ -150,6 +151,7 @@ background-color: rgba(0, 255, 0, 0.2);
     document.body.innerHTML = originalContents;
   }
   </script>
+ 
 <?php
   
   //recalls the Session variable created in CheckLogin.php to obtain the user's id number and to confirm they have logged in.
@@ -166,6 +168,9 @@ $stat = $_SESSION['stat'];
 </script>
 <?php
 }
+	if (isset($_SESSION['sql'])) {
+   $sqlsesh = $_SESSION['sql'];
+	}
 ?>
 </head>
 <body>
@@ -273,7 +278,7 @@ echo "<input type='checkbox' name='statusS' value='Submitted'> Submitted &nbsp "
 echo "<input type='checkbox' name='statusW' value='Work In Progress'>    Work In Progress &nbsp ";
 echo "<input type='checkbox' name='statusC' value='Completed'>    Completed<br><br>";
 
-echo "  <button class='button'>
+echo "  <button class='button' name='check' id='check' value='TRUE'>
     Submit
     </button>";
 // echo "<input type='submit' style='font-size:20px; margin-left:200px;' name='Add' value='Search'style='color:black'>";
@@ -284,12 +289,21 @@ echo "</div>";
 
 include "Config.php";
 
+$check = $_POST["check"];
 $bldg = $_POST["building"];
 $craft = $_POST["craft"];
 $user1 = $_POST["submitter"];
 $statusS = $_POST["statusS"];
 $statusW = $_POST["statusW"];
 $statusC = $_POST["statusC"];
+
+
+	if (isset($_SESSION['sql']) && ($check != TRUE)) {
+	       $sql = $_SESSION['sql'];
+	    include "PFBuildingSWC.php";
+	  echo table_start($sql);
+	 
+	}
 
 if($_POST["equip"] == "Other"){
   if($_POST["otherType"] !== ""){
@@ -380,11 +394,20 @@ if(isset($statusC)){
 if(isset($statusS)||isset($statusW)||isset($statusC)){
     $sql = $sql.")";
 }
+if($sql != "FROM WORKORDER NATURAL JOIN USER WHERE "){
 include 'PFBuildingSWC.php';
-            echo table_start($sql);
+$_SESSION['sql'] = $sql;
+           	echo "<script>
+    window.location.href='/Pages/SearchWindow.1.php';
+    </script>";
+}
+
+
+
 ?>
 <a href="javascript:void(0);" onclick="printPage();">Print</a> 
-<script>
+
+<script type="text/javascript">
 var coll = document.getElementsByClassName("collapsible");
 var i;
 
@@ -399,9 +422,9 @@ for (i = 0; i < coll.length; i++) {
     } 
   });
 }
+
 function printPage(){
     var win = window.open('','','left=0,top=0,width=552,height=477,toolbar=0,scrollbars=0,status =0');
-
     var content = "<html>";
     content += "<body onload=\"window.print(); window.close();\">";
     content += "<table>"
@@ -414,7 +437,5 @@ function printPage(){
 }
 
 </script>
-
-
 </body>
 </html>
