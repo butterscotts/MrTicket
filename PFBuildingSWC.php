@@ -2,11 +2,12 @@
 <?php
   
   //recalls the Session variable created in CheckLogin.php to obtain the user's id number and to confirm they have logged in.
-  
+  session_start();
 
 	if (isset($_SESSION['user'])) {
 $user = $_SESSION['user'];
 $stat = $_SESSION['stat'];
+
 }	else{
 ?>
 <meta http-equiv="refresh" content="0; URL='https://mrticket-mrcalihan.c9users.io/Index.1.php'" />
@@ -21,12 +22,13 @@ $stat = $_SESSION['stat'];
 function table_start($sql){
 include 'Config.php';
 $results_per_page = 10;
-if (isset($_GET["page".$section.""])) { $page  = $_GET["page".$section.""]; } else { $page=1; }; 
+if (isset($_GET["page"])) { $page  = $_GET["page"]; } else { $page=1; }; 
 $start_from = ($page-1) * $results_per_page;
 $sql1 = "SELECT * ".$sql." ORDER BY WO_ID DESC LIMIT $start_from, ".$results_per_page;
-// echo $sql1;
+echo $sql1;
 $rs_result = $db->query($sql1); 
 ?> 
+
 <div class="content">
   <table id="customers">
      
@@ -55,7 +57,7 @@ $rs_result = $db->query($sql1);
    
     }
     echo "<tr class='$color'>";
-      echo "<td style=color:blue><a href=Edit.1.php?wo=".$row['WO_ID'].">Edit Ticket<br> #".$row['WO_ID']."<br>".$row['WO_STATUS']."</td>";
+      echo "<td style='color:blue; border-color: black'><a href=Edit.1.php?wo=".$row['WO_ID'].">Edit Ticket<br> #".$row['WO_ID']."<br>".$row['WO_STATUS']."</td>";
       echo "<td>".$row['USER_LNAME'].", ".$row['USER_FNAME']."</td>";
       echo "<td>".$row['WO_REQDATE']."<br>".$row['WO_COMPDATE']."</td>";
       echo "<td>".$row['WO_CRAFT']."</td>";
@@ -74,8 +76,10 @@ $rs_result = $db->query($sql1);
       }
       echo "</tr>";
       
-}; 
+   
+ };
 ?>
+
 </table>
 
 <?php
@@ -85,7 +89,7 @@ $row = $result->fetch_assoc();
 $total_pages = ceil($row["total"] / $results_per_page); // calculate total pages with results
 echo "Showing Page #".$page." of the ".$status." table <br>";
 for ($i=1; $i<=$total_pages; $i++) {  // print links for all pages
-            echo "<a href='/Pages/SearchWindow.1.php?page".$section."=".$i."'";
+            echo "<a href='/Pages/SearchWindow.1.php?page=".$i."'";
             if ($i==$page)  echo " class='curPage'";
             echo "style = 'font-size: 20px'>".$i."</a> "; 
 };
