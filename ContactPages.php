@@ -92,7 +92,10 @@ input[type=text], select {
 <?php
   
   //recalls the Session variable created in CheckLogin.php to obtain the user's id number and to confirm they have logged in.
-  
+     if (isset($_SESSION['sql'])){
+	    unset($_SESSION['sql']);
+	}
+
 
 	if (isset($_SESSION['user'])) {
 $user = $_SESSION['user'];
